@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bc250-smu-oc"
+version = "0.1.0"
+description = "BC250 CPU Overclocking Tools"
+requires-python = ">=3.8"
+
+[project.scripts]
+bc250-detect = "bc250_detect:main"
+bc250-apply = "bc250_apply:main"
+
+[tool.setuptools]
+py-modules = ["bc250_detect", "bc250_apply", "bc250_smu", "bc250_limits", "stress_helper"]
