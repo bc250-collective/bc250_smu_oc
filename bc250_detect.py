@@ -25,8 +25,8 @@ def vid_predict_delta(clock_cur, clock_next, scale_cur, scale_next):
     return vid_predict(clock_next, scale_next) - vid_predict(clock_cur, scale_cur)
 
 def vid_predict_relative(clock_cur, clock_next, scale_cur, scale_next, vid_cur):
-    # We scale our predction by 0.8 to bias it towards the upper limit
-    return vid_cur + (vid_predict_delta(clock_cur, clock_next, scale_cur, scale_next) * 0.8)
+    # We scale our predction by 0.75 to bias it towards the upper limit
+    return vid_cur + (vid_predict_delta(clock_cur, clock_next, scale_cur, scale_next) * 0.75)
 
 def smu_apply(clock, scale):
     if clock > limits.freq_max or scale < limits.scale_min or scale > limits.scale_max:
@@ -113,7 +113,7 @@ def detect(f_target, v_max, t_max):
 
     print(f"Attempting to reach {f_target} MHz @ {v_max} mV, {t_max}°C")
 
-    while f_safe < f_target:
+    while True:
         smu_apply(f_test, v_scale_test)
 
         stress_start()
@@ -122,7 +122,7 @@ def detect(f_target, v_max, t_max):
         v_meas = smu.get_cpu_vid()
         if v_meas > v_max:
             stress_stop()
-            v_scale_test -= int((v_meas - v_max) / 6.0) # estimate the required undervolt
+            v_scale_test -= max(int((v_meas - v_max) / 6.0), 1) # estimate the required undervolt
             continue
 
         print(f"Stress Testing {f_test} MHz @ {v_meas} mV")
@@ -138,6 +138,10 @@ def detect(f_target, v_max, t_max):
         f_safe = f_test
         v_scale_safe = v_scale_test
         write_config(f_safe, v_scale_safe, t_max)
+
+        # Main exit condition
+        if not f_safe < f_target:
+            break
 
         f_test += f_step
 
