@@ -68,7 +68,7 @@ systemctl enable bc250-smu-oc</pre>
 
 ## Undervolting 
 
-I you just want to undervolt without increasing the frequency:
+If you just want to undervolt without increasing the frequency:
 <pre>bc250-detect --frequency 3500 --vid 1000 --keep</pre>
 
 The stock core voltage at 3.5 GHz is around 1180 mV. 
@@ -76,7 +76,7 @@ The stock core voltage at 3.5 GHz is around 1180 mV.
 ## Monitoring & Loading your System
 
 To monitor SMU metrics: [amdgpu_top](https://github.com/Umio-Yasuno/amdgpu_top) or [kernel patch](https://github.com/bc250-collective/amd_smu_reverse_engineering/tree/main/patches)   
-I recommend amdgpu_top because it does not require recompilation of the kernel.  
+I recommend `amdgpu_top` because it does not require recompilation of the kernel.  
 
 ![amdgpu_top screenshot](/figures/amdgpu_top.png)
 
