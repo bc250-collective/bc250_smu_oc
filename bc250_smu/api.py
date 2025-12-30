@@ -75,7 +75,7 @@ class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
     def test_message(self, value: int) -> bool:
         """Send test message and verify the response increments the value."""
         response = self.send_message(
-            0,
+            3,
             0x01,
             arg=value,
             pack=pack_u32,
