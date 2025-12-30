@@ -12,7 +12,7 @@ Always make sure that CPU core voltage ("Vid") does not exceed 1.325 V under any
 
 1) Install `stress` CPU stress testing tool using you distributions package manager
 
-2) Use pip or pipx depending on how your OS manages python packages to install the cli
+2) Use `pip` or `pipx` depending on how your OS manages python packages to install the cli
 
 <pre>
 git clone https://github.com/bc250-collective/bc250_smu_oc.git
