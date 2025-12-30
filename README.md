@@ -100,7 +100,7 @@ If you want to target high clocks even when the GPU is loaded, watercooling migh
 
 ## Advanced Overclocking 
 
-The `bc250_smu.py` libary defines more SMU messages for overclocking. Be aware that the SMU does minimal validity checking & you have full control over the system!
+The `bc250_smu` libary defines more SMU messages for overclocking. Be aware that the SMU does minimal validity checking & you have full control over the system!
 
 ## Vid Curves for Reference
 
