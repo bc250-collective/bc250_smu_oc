@@ -61,11 +61,11 @@ options:
 ## Overclocking 
 
 To begin, use `bc250-detect` to determine a stable overclock for your system. It will create `overclock.conf` with the detected parameters.   
-You can try these settings to reach 4 GHz @ 1275 mV on your system. Use the --keep flag to keep the overclock after the detection finishes. This will also set the CPU & GPU Temperature limits to a safer 90 °C (100 °C is stock)  
+You can try these settings to reach 4 GHz @ 1250 mV on your system. Use the --keep flag to keep the overclock after the detection finishes. This will also set the CPU & GPU Temperature limits to a safer 90 °C (100 °C is stock)  
 
-<pre>bc250-detect --frequency 4000 --vid 1275 --keep</pre>
+<pre>bc250-detect --frequency 4000 --vid 1250 --keep</pre>
 
-If your system crashes during the detection, try rerunning the command with `--vid 1300` or `--vid 1325`. If it still is not stable, reduce the target frequency. To be easy on your system, you should stay below 1300 mV Vid.
+If your system crashes during the detection, try rerunning the command with `--vid 1275` or `--vid 1300`. If it still is not stable, reduce the target frequency. To be easy on your system, you should stay below 1300 mV Vid.
 
 Once you are happy with your settings & have done more thorough stability testing, you can apply the settings on startup:
 
