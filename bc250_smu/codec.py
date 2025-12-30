@@ -19,3 +19,11 @@ def pack_vid_offset(volts: float) -> int:
 
 def decode_u32(value: int) -> int:
     return int(value) & 0xFFFFFFFF
+
+
+def vid_to_mv(vid: int) -> int:
+    return int(round(((float(vid) * -0.00625) + 1.55) * 1000.0))
+
+
+def mv_to_vid(mv: int) -> int:
+    return int(round((1.55 - (float(mv) / 1000.0)) / 0.00625))

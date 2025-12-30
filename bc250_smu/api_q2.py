@@ -2,14 +2,21 @@ from .codec import decode_u32, pack_u32
 
 
 class Queue2Mixin:
-    def _q2_0x04_get_device_name(self) -> int | None:
-        return self.send_message(2, 0x04, decode=decode_u32)
+    def q2_0x03(self) -> int:
+        """Return constant 23."""
+        return self.send_message(2, 0x03, decode=decode_u32)
 
-    def _q2_0x05_enable_smu_features(self, value: int = 0) -> int | None:
-        return self.send_message(2, 0x05, arg=value, pack=pack_u32)
+    def q2_0x04_get_device_name(self, index: int) -> int:
+        """Return a 4-byte chunk of the device name for index 0-11."""
+        return self.send_message(2, 0x04, arg=index, pack=pack_u32, decode=decode_u32)
 
-    def _q2_0x06_disable_smu_features(self, value: int = 0) -> int | None:
-        return self.send_message(2, 0x06, arg=value, pack=pack_u32)
+    def q2_0x05_enable_smu_features(self, mask_low: int, mask_high: int = 0) -> None:
+        """Enable SMU features using a 64-bit mask split into two 32-bit words."""
+        self.send_message(2, 0x05, arg=mask_low, arg_high=mask_high, pack=pack_u32)
+
+    def q2_0x06_disable_smu_features(self, mask_low: int, mask_high: int = 0) -> None:
+        """Disable SMU features using a 64-bit mask split into two 32-bit words."""
+        self.send_message(2, 0x06, arg=mask_low, arg_high=mask_high, pack=pack_u32)
 
     def _q2_0x07(self) -> int | None:
         return self.send_message(2, 0x07)
@@ -53,8 +60,10 @@ class Queue2Mixin:
     def _q2_0x16(self) -> int | None:
         return self.send_message(2, 0x16)
 
-    def _q2_0x17_cpu_droop_calibration(self, value: int = 0) -> int | None:
-        return self.send_message(2, 0x17, arg=value, pack=pack_u32)
+    def q2_0x17_cpu_droop_calibration(self, test_voltage_mv: int, margin_mv: int) -> None:
+        """Run CPU droop calibration (low16=test mV, high16=margin mV)."""
+        param = ((margin_mv & 0xFFFF) << 16) | (test_voltage_mv & 0xFFFF)
+        self.send_message(2, 0x17, arg=param, pack=pack_u32, check_status=False)
 
     def _q2_0x1a(self) -> int | None:
         return self.send_message(2, 0x1A)

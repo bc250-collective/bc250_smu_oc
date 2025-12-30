@@ -12,7 +12,10 @@ from .transport import Bc250PciTransport
 
 DEFAULT_QUEUE_ADDRS: Dict[int, Tuple[int, int, int]] = {
     0: (0x03B10A08, 0x03B10A68, 0x03B10A48),
+    1: (0x03B10A00, 0x03B10A60, 0x03B10A40),
+    2: (0x03B10528, 0x03B10564, 0x03B10998),
     3: (0x03B10A20, 0x03B10A80, 0x03B10A88),
+    4: (0x03B10A24, 0x03B10A84, 0x03B10A8C),
 }
 
 
@@ -70,6 +73,7 @@ class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
         return decode(self.raw_read(queue_id))
 
     def test_message(self, value: int) -> bool:
+        """Send test message and verify the response increments the value."""
         response = self.send_message(
             0,
             0x01,

@@ -1,4 +1,4 @@
-from .codec import decode_u32, pack_u32
+from .codec import decode_u32, mv_to_vid, pack_u32, vid_to_mv
 
 
 class Queue0Mixin:
@@ -20,10 +20,13 @@ class Queue0Mixin:
     def _transfer_table_dram2smu(self) -> None:
         self.send_message(0, 0x07)
 
-    def _request_core_pstate(self, core_id: int) -> None:
-        self.send_message(0, 0x0B, arg=core_id, pack=pack_u32)
+    def request_core_pstate(self, pstate: int, core_mask: int) -> None:
+        """Request a CPU P-state for cores specified in the mask."""
+        param = ((pstate & 0xF) << 16) | (core_mask & 0xFF)
+        self.send_message(0, 0x0B, arg=param, pack=pack_u32)
 
-    def _query_core_pstate(self, core_id: int) -> int:
+    def query_core_pstate(self, core_id: int) -> int:
+        """Return the current core P-state (status 0xFF if core_id > 7)."""
         return self.send_message(
             0,
             0x0C,
@@ -36,11 +39,14 @@ class Queue0Mixin:
     def _request_gfxclk(self) -> None:
         self.send_message(0, 0x0E)
 
-    def _query_gfxclk(self) -> int:
+    def query_gfxclk(self) -> int:
+        """Return the current GFX frequency in kHz."""
         return self.send_message(0, 0x0F, decode=decode_u32)
 
-    def _query_vddcr_soc_clock(self) -> int:
-        return self.send_message(0, 0x11, decode=decode_u32)
+    def query_vddcr_soc_clock(self, index: int) -> int:
+        """Return the SoC clock for the given DPM index (upper 16 bits)."""
+        param = (index & 0xFFFF) << 16
+        return self.send_message(0, 0x11, arg=param, pack=pack_u32, decode=decode_u32)
 
     def _query_df_pstate(self) -> int:
         return self.send_message(0, 0x13, decode=decode_u32)
@@ -69,47 +75,71 @@ class Queue0Mixin:
     def _clear_telemetry_max(self) -> None:
         self.send_message(0, 0x1D)
 
-    def _query_active_wgp(self) -> int:
+    def query_active_wgp(self) -> int:
+        """Return the active workgroup processor count."""
         return self.send_message(0, 0x1E, decode=decode_u32)
 
-    def _get_gfx_frequency(self) -> int:
+    def get_gfx_frequency(self) -> int:
+        """Return the current GFX frequency in kHz (alias of query_gfxclk)."""
         return self.send_message(0, 0x37, decode=decode_u32)
 
-    def _get_gfx_vid(self) -> int:
-        return self.send_message(0, 0x38, decode=decode_u32)
+    def get_gfx_vid(self) -> int:
+        """Return the current GFX VID in mV."""
+        vid = self.send_message(0, 0x38, decode=decode_u32)
+        return vid_to_mv(vid)
 
-    def _force_gfx_freq(self, mhz_freq: int) -> None:
-        self.send_message(0, 0x39, arg=mhz_freq, pack=pack_u32)
+    def force_gfx_freq(self, freq_khz: int) -> None:
+        """Force GFX frequency; firmware interprets the argument as kHz."""
+        self.send_message(0, 0x39, arg=freq_khz, pack=pack_u32)
 
-    def _unforce_gfx_freq(self) -> None:
+    def unforce_gfx_freq(self) -> None:
+        """Clear any forced GFX frequency settings."""
         self.send_message(0, 0x3A)
 
-    def _force_gfx_vid(self, vid: int) -> None:
+    def force_gfx_vid(self, mv: int) -> None:
+        """Force GFX VID using millivolts input."""
+        vid = mv_to_vid(mv)
         self.send_message(0, 0x3B, arg=vid, pack=pack_u32)
 
-    def _unforce_gfx_vid(self) -> None:
-        self.send_message(0, 0x3C)
+    def unforce_gfx_vid(self) -> None:
+        """Clear any forced GFX VID settings."""
+        self.send_message(0, 0x3C, check_status=False)
 
-    def _get_enabled_smu_features(self) -> int:
+    def get_enabled_smu_features(self) -> int:
+        """Return the enabled SMU feature bitmask."""
         return self.send_message(0, 0x3D, decode=decode_u32)
 
-    def _set_core_enable_mask(self, mask: int) -> None:
-        self.send_message(0, 0x2C, arg=mask, pack=pack_u32)
+    def set_core_enable_mask(self, mask: int) -> None:
+        """Set the CPU core enable mask (lower 8 bits)."""
+        self.send_message(0, 0x2C, arg=mask & 0xFF, pack=pack_u32)
 
     def _gfx_cac_weight_operation(self, value: int) -> None:
+        """For CAC Weights we don't really know what it does, only related thing we found was
+        described in one of AMD Patent, with just mention of it's existing
+        if someone from AMD reads this and wants to explain it, please help."""
         self.send_message(0, 0x2F, arg=value, pack=pack_u32)
 
     def _l3_cac_weight_operation(self, value: int) -> None:
+        """For CAC Weights we don't really know what it does, only related thing we found was
+        described in one of AMD Patents, with just mention of it's existing
+        if someone from AMD reads this and wants to explain it, please help."""
         self.send_message(0, 0x30, arg=value, pack=pack_u32)
 
     def _pack_core_cac_weight(self, value: int) -> None:
+        """For CAC Weights we don't really know what it does, only related thing we found was
+        described in one of AMD Patents, with just mention of it's existing
+        if someone from AMD reads this and wants to explain it, please help."""
         self.send_message(0, 0x31, arg=value, pack=pack_u32)
 
     def _set_driver_table_vmid(self, value: int) -> None:
         self.send_message(0, 0x34, arg=value, pack=pack_u32)
 
-    def _set_soft_min_cclk(self, value: int) -> None:
-        self.send_message(0, 0x35, arg=value, pack=pack_u32)
+    def set_soft_min_cclk(self, core_id: int, freq_khz: int) -> int:
+        """Set soft min CCLK for a core; returns the clamped frequency in kHz."""
+        param = ((core_id & 0xFF) << 20) | (freq_khz & 0xFFFF)
+        return self.send_message(0, 0x35, arg=param, pack=pack_u32, decode=decode_u32)
 
-    def _set_soft_max_cclk(self, value: int) -> None:
-        self.send_message(0, 0x36, arg=value, pack=pack_u32)
+    def set_soft_max_cclk(self, core_id: int, freq_khz: int) -> int:
+        """Set soft max CCLK for a core; returns the clamped frequency in kHz."""
+        param = ((core_id & 0xFF) << 20) | (freq_khz & 0xFFFF)
+        return self.send_message(0, 0x36, arg=param, pack=pack_u32, decode=decode_u32)
