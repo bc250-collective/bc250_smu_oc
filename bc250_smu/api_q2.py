@@ -63,7 +63,7 @@ class Queue2Mixin:
     def q2_0x17_cpu_droop_calibration(self, test_voltage_mv: int, margin_mv: int) -> None:
         """Run CPU droop calibration (low16=test mV, high16=margin mV)."""
         param = ((margin_mv & 0xFFFF) << 16) | (test_voltage_mv & 0xFFFF)
-        self.send_message(2, 0x17, arg=param, pack=pack_u32, check_status=False)
+        self.send_message(2, 0x17, arg=param, pack=pack_u32)
 
     def _q2_0x1a(self) -> int | None:
         return self.send_message(2, 0x1A)

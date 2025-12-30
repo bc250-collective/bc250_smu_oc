@@ -2,37 +2,7 @@ from .codec import decode_u32, mv_to_vid, pack_s16, pack_u32, pack_vid_offset, v
 
 
 class Queue3Mixin:
-    def _set_boost_clock(self, clock_mhz: int) -> None:
-        self.send_message(3, 0x8F, arg=clock_mhz, pack=pack_u32)
-
-    def _set_core_clock_stretch(self, factor: int) -> None:
-        self.send_message(3, 0x52, arg=factor, pack=pack_u32)
-
-    def _set_ccx_clock_stretch(self, factor: int) -> None:
-        self.send_message(3, 0x53, arg=factor, pack=pack_u32)
-
-    def _set_vid_scaling(self, scaling: int) -> None:
-        self.send_message(3, 0x50, arg=scaling, pack=pack_s16)
-
-    def _set_vid_offset(self, volts: float) -> None:
-        self.send_message(3, 0x49, arg=volts, pack=pack_vid_offset)
-
-    def _disable_extra_voltage(self, flag: bool) -> None:
-        self.send_message(3, 0x9A, arg=1 if flag else 0, pack=pack_u32)
-
-    def _set_cpu_max_temp(self, temp_c: int) -> None:
-        self.send_message(3, 0x8B, arg=temp_c, pack=pack_u32)
-
-    def _set_gpu_max_temp(self, temp_c: int) -> None:
-        self.send_message(3, 0x8C, arg=temp_c, pack=pack_u32)
-
-    def _get_cpu_vid(self) -> int:
-        vid = self.send_message(3, 0x36, decode=decode_u32)
-        return vid_to_mv(vid)
-
-    def _get_core_clock(self, core_id: int) -> int:
-        return self.send_message(3, 0x43, arg=core_id, pack=pack_u32, decode=decode_u32)
-
+    
     def _q3_0x04(self) -> int | None:
         return self.send_message(3, 0x04)
 
@@ -91,7 +61,7 @@ class Queue3Mixin:
 
     def q3_0x20_set_max_temperature_cpu_gpu(self, temp_c: int) -> None:
         """Set max temperature for CPU/GPU (0-100 C)."""
-        self.send_message(3, 0x20, arg=temp_c, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x20, arg=temp_c, pack=pack_u32)
 
     def _q3_0x24(self) -> int | None:
         return self.send_message(3, 0x24)
@@ -106,8 +76,6 @@ class Queue3Mixin:
         param = (core_id & 0xFF) << 16
         self.send_message(3, 0x26, arg=param, pack=pack_u32)
 
-    def _q3_0x27_secure_access(self) -> int | None:
-        return self.send_message(3, 0x27)
 
     def _q3_0x28_write_to_dat_8b08_secure(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x28, arg=value, pack=pack_u32)
@@ -115,23 +83,8 @@ class Queue3Mixin:
     def _q3_0x29_write_to_pointer_at_dat(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x29, arg=value, pack=pack_u32)
 
-    def _q3_0x2a_secure_access(self) -> int | None:
-        return self.send_message(3, 0x2A)
-
     def _q3_0x2b_writes_into_dat_00008b0c(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x2B, arg=value, pack=pack_u32)
-
-    def _q3_0x2c_secure_access(self) -> int | None:
-        return self.send_message(3, 0x2C)
-
-    def _q3_0x2d_secure_access(self) -> int | None:
-        return self.send_message(3, 0x2D)
-
-    def _q3_0x2e_secure_access(self) -> int | None:
-        return self.send_message(3, 0x2E)
-
-    def _q3_0x2f_secure_access(self) -> int | None:
-        return self.send_message(3, 0x2F)
 
     def q3_0x30_return_cpu_vid_float_or(self, selector: int) -> int:
         """Return packed status+value for CPU (0) or GFX (1) dynamic VID offset."""
@@ -159,7 +112,7 @@ class Queue3Mixin:
 
     def q3_0x3b_get_clk_assigned_to_p_state(self, pstate: int) -> int:
         """Return the P-state clock in kHz for pstate 0-7."""
-        return self.send_message(3, 0x3B, arg=pstate, pack=pack_u32, decode=decode_u32, check_status=False)
+        return self.send_message(3, 0x3B, arg=pstate, pack=pack_u32, decode=decode_u32)
 
     def _q2_0x05_enable_smu_features_3c(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x3C, arg=value, pack=pack_u32)
@@ -177,27 +130,31 @@ class Queue3Mixin:
     def q3_0x42_return_vddcrsoc_dpm_value(self, index: int) -> int:
         """Return the SoC DPM clock for the given index (0-19)."""
         param = (index & 0xFFFF) << 16
-        return self.send_message(3, 0x42, arg=param, pack=pack_u32, decode=decode_u32, check_status=False)
+        return self.send_message(3, 0x42, arg=param, pack=pack_u32, decode=decode_u32)
 
     def q3_0x43_get_core_freq(self, core_id: int) -> int:
         """Return core frequency in kHz for core_id 0-7."""
-        return self.send_message(3, 0x43, arg=core_id, pack=pack_u32, decode=decode_u32, check_status=False)
+        return self.send_message(3, 0x43, arg=core_id, pack=pack_u32, decode=decode_u32)
 
     def q3_0x47_return_status_0xfe(self) -> int:
         """Return status 0xFE."""
-        return self.send_message(3, 0x47, check_status=False)
+        return self.send_message(3, 0x47)
 
     def q3_0x48_return_status_0xfe(self) -> int:
         """Return status 0xFE."""
-        return self.send_message(3, 0x48, check_status=False)
+        return self.send_message(3, 0x48)
 
     def q3_0x49_set_cpu_vid_offset(self, offset: int) -> None:
-        """Set CPU VID offset (valid range -4..4)."""
-        self.send_message(3, 0x49, arg=offset, pack=pack_u32, check_status=False)
+        """Set CPU VID offset (valid range -5..5)."""
+        if (offset > 5) or (offset < -5):
+            raise ValueError("Offset can be in range of -5 to 5")
+        self.send_message(3, 0x49, arg=offset, pack=pack_u32)
 
-    def q3_0x4a_getgfxvidoffset1(self, offset: int) -> None:
-        """Set GFX VID offset 1 (valid range -5..4)."""
-        self.send_message(3, 0x4A, arg=offset, pack=pack_u32, check_status=False)
+    def q3_0x4a_get_gfx_vid_offset1(self, offset: int) -> None:
+        """Set GFX VID offset 1 (valid range -5..5)."""
+        if (offset > 5) or (offset < -5):
+            raise ValueError("Offset can be in range of -5 to 5")
+        self.send_message(3, 0x4A, arg=offset, pack=pack_u32)
 
     def _q2_0x17_cpu_droop_calibration_4b(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x4B, arg=value, pack=pack_u32)
@@ -205,33 +162,33 @@ class Queue3Mixin:
     def q3_0x4c_gfx_droop_calibration(self, test_voltage_mv: int, margin_mv: int) -> None:
         """Run GFX droop calibration (low16=test mV, high16=margin mV)."""
         param = ((margin_mv & 0xFFFF) << 16) | (test_voltage_mv & 0xFFFF)
-        self.send_message(3, 0x4C, arg=param, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x4C, arg=param, pack=pack_u32)
 
     def q3_0x4d_set_cpu_vid_offset_large(self, offset_v: float) -> None:
         """Set CPU VID float offset (valid range about -0.2..0.2 V)."""
-        self.send_message(3, 0x4D, arg=offset_v, pack=pack_vid_offset, check_status=False)
+        self.send_message(3, 0x4D, arg=offset_v, pack=pack_vid_offset)
 
     def q3_0x4e_set_gpu_vid_offset_largee(self, offset_v: float) -> None:
         """Set GPU VID float offset (valid range about -0.2..0.2 V)."""
-        self.send_message(3, 0x4E, arg=offset_v, pack=pack_vid_offset, check_status=False)
+        self.send_message(3, 0x4E, arg=offset_v, pack=pack_vid_offset)
 
     def _q3_0x4f(self) -> int | None:
         return self.send_message(3, 0x4F)
 
     def q3_0x50_scale_f_vid_curve(self, value: int) -> None:
         """Set VID curve scaling (signed 16-bit, limit 0x3FFF)."""
-        self.send_message(3, 0x50, arg=value, pack=pack_s16, check_status=False)
+        self.send_message(3, 0x50, arg=value, pack=pack_s16)
 
     def _q3_0x51_set_cpu_coeff(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x51, arg=value, pack=pack_u32)
 
     def q3_0x52_set_cpu_clock_stretch_coeff(self, coeff: int) -> None:
         """Set CPU clock stretch coefficient (0-1000)."""
-        self.send_message(3, 0x52, arg=coeff, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x52, arg=coeff, pack=pack_u32)
 
     def q3_0x53_set_ccx_clock_stretch_coeff(self, coeff: int) -> None:
         """Set CCX clock stretch coefficient (0-1000)."""
-        self.send_message(3, 0x53, arg=coeff, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x53, arg=coeff, pack=pack_u32)
 
     def _q3_0x54(self) -> int | None:
         return self.send_message(3, 0x54)
@@ -291,7 +248,7 @@ class Queue3Mixin:
     def q3_0x6d_force_clock_stretching_vid(self, cpu_vid_mv: int, ccx_vid_mv: int) -> None:
         """Force clock stretching VIDs (low16=CPU mV, high16=CCX mV)."""
         param = ((ccx_vid_mv & 0xFFFF) << 16) | (cpu_vid_mv & 0xFFFF)
-        self.send_message(3, 0x6D, arg=param, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x6D, arg=param, pack=pack_u32)
 
     def _q3_0x6e_cpu_coefficients(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x6E, arg=value, pack=pack_u32)
@@ -322,7 +279,7 @@ class Queue3Mixin:
 
     def q3_0x77_set_cpu_max_current(self, current_ma: int) -> None:
         """Set CPU max current (mA)."""
-        self.send_message(3, 0x77, arg=current_ma, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x77, arg=current_ma, pack=pack_u32)
 
     def q3_0x7f_get_current_perf_sample(self) -> int:
         """Return current performance sample period average (us)."""
@@ -343,11 +300,11 @@ class Queue3Mixin:
 
     def q3_0x8b_set_cpu_max_temperature(self, temp_c: int) -> None:
         """Set CPU max temperature (0-100 C)."""
-        self.send_message(3, 0x8B, arg=temp_c, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x8B, arg=temp_c, pack=pack_u32)
 
     def q3_0x8c_set_gpu_max_temperature(self, temp_c: int) -> None:
         """Set GPU max temperature (0-100 C)."""
-        self.send_message(3, 0x8C, arg=temp_c, pack=pack_u32, check_status=False)
+        self.send_message(3, 0x8C, arg=temp_c, pack=pack_u32)
 
     def q3_0x8d_get_current_sample_interval(self) -> int:
         """Return current sample interval."""
@@ -376,8 +333,8 @@ class Queue3Mixin:
     def _q3_0x99_modify_p_state_0_parameter_an(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x99, arg=value, pack=pack_u32)
 
-    def _q3_0x9a_set_vid_extra_voltage_flags(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x9A, arg=value, pack=pack_u32)
+    def disable_extra_cpu_gpu_voltage(self, flag: bool) -> None:
+        self.send_message(3, 0x9A, arg=1 if flag else 0, pack=pack_u32)
 
     def _q3_0x9b_switch_core_bilinear_model(self) -> int | None:
         return self.send_message(3, 0x9B)
@@ -390,3 +347,23 @@ class Queue3Mixin:
 
     def _q3_0xa8_cpu_related(self, value: int = 0) -> int | None:
         return self.send_message(3, 0xA8, arg=value, pack=pack_u32)
+
+    # This group of functions seems to be accessable if some flag is passed to SMU at boot from bios
+    # Currently we have no idea how to do it
+    def _q3_0x27_secure_access(self) -> int | None:
+        return self.send_message(3, 0x27)
+
+    def _q3_0x2a_secure_access(self) -> int | None:
+        return self.send_message(3, 0x2A)
+
+    def _q3_0x2c_secure_access(self) -> int | None:
+        return self.send_message(3, 0x2C)
+
+    def _q3_0x2d_secure_access(self) -> int | None:
+        return self.send_message(3, 0x2D)
+
+    def _q3_0x2e_secure_access(self) -> int | None:
+        return self.send_message(3, 0x2E)
+
+    def _q3_0x2f_secure_access(self) -> int | None:
+        return self.send_message(3, 0x2F)

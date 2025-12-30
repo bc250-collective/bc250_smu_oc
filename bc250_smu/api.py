@@ -28,7 +28,7 @@ class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
         queue_addrs: Optional[Dict[int, Tuple[int, int, int]]] = None,
         timeout: int = 100,
     ) -> None:
-        self._allow_queue1 = allow_queue1
+        self._allow_queue0 = allow_queue0
         self._transport = Bc250PciTransport(bdf=bdf, use_flock=use_flock)
         self._transport.open()
         addrs = dict(DEFAULT_QUEUE_ADDRS)
@@ -94,5 +94,5 @@ class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
         return self._queues[queue]
 
     def _guard_queue(self, queue: int) -> None:
-        if queue == 1 and not self._allow_queue1:
-            raise PermissionError("queue 1 access disabled; pass allow_queue1=True to enable")
+        if queue == 0 and not self._allow_queue0:
+            raise PermissionError("queue 0 access disabled; pass allow_queue0=True to enable")
