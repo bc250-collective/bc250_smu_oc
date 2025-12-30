@@ -242,8 +242,8 @@ class Queue3Mixin:
     def _q3_0x6b(self) -> int | None:
         return self.send_message(3, 0x6B)
 
-    def _q3_0x6c_set_temperature_parameters(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x6C, arg=value, pack=pack_u32)
+    def _q3_0x6c_set_temperature_parameters(self, value: int = 0) -> None:
+        self.send_message(3, 0x6C, arg=value, pack=pack_u32)
 
     def q3_0x6d_force_clock_stretching_vid(self, cpu_vid_mv: int, ccx_vid_mv: int) -> None:
         """Force clock stretching VIDs (low16=CPU mV, high16=CCX mV)."""
