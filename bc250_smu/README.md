@@ -37,7 +37,11 @@ from bc250_smu import Bc250Smu
 ```python
 from bc250_smu import Bc250Smu
 
+<<<<<<< HEAD
 smu = Bc250Smu(allow_queue0=False, use_flock=True)
+=======
+smu = Bc250Smu(use_flock=True)
+>>>>>>> 8464f66 (Readme changes)
 
 # Basic health check
 smu.check_test_message()
