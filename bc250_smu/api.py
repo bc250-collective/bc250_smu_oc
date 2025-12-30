@@ -467,7 +467,7 @@ class Bc250Smu:
     def q3_0x4d_set_cpu_vid_offset_large(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x4D, arg=value, pack=pack_vid_offset)
 
-    def q3_0x4e_set_gpu_vid_offset_largee(self, value: int = 0) -> int | None:
+    def q3_0x4e_set_gpu_vid_offset_large(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x4E, arg=value, pack=pack_vid_offset)
 
     def q3_0x4f(self) -> int | None:
