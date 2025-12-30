@@ -10,9 +10,9 @@ Always make sure that CPU core voltage ("Vid") does not exceed 1.325 V under any
 
 ## Software Support
 
-OS: Tested on Ubuntu 25.10, Bazzite, Arch Linux
-Service Manager: systemd
-Firmware: Verified on BIOS V3 & V5
+OS: Tested on Ubuntu 25.10, Bazzite, Arch Linux   
+Service Manager: systemd   
+Firmware: Verified on BIOS V3 & V5   
 
 ## Installation 
 
