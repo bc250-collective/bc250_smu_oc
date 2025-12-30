@@ -40,7 +40,7 @@ class Queue0Mixin:
         self.send_message(0, 0x0E)
 
     def query_gfxclk(self) -> int:
-        """Return the current GFX frequency in kHz."""
+        """Return the current GFX frequency in MHz."""
         return self.send_message(0, 0x0F, decode=decode_u32)
 
     def query_vddcr_soc_clock(self, index: int) -> int:
@@ -80,7 +80,7 @@ class Queue0Mixin:
         return self.send_message(0, 0x1E, decode=decode_u32)
 
     def get_gfx_frequency(self) -> int:
-        """Return the current GFX frequency in kHz (alias of query_gfxclk)."""
+        """Return the current GFX frequency in MHz (alias of query_gfxclk)."""
         return self.send_message(0, 0x37, decode=decode_u32)
 
     def get_gfx_vid(self) -> int:
@@ -88,9 +88,9 @@ class Queue0Mixin:
         vid = self.send_message(0, 0x38, decode=decode_u32)
         return vid_to_mv(vid)
 
-    def force_gfx_freq(self, freq_khz: int) -> None:
-        """Force GFX frequency; firmware interprets the argument as kHz."""
-        self.send_message(0, 0x39, arg=freq_khz, pack=pack_u32)
+    def force_gfx_freq(self, freq_mhz: int) -> None:
+        """Force GFX frequency; firmware interprets the argument as MHz."""
+        self.send_message(0, 0x39, arg=freq_mhz, pack=pack_u32)
 
     def unforce_gfx_freq(self) -> None:
         """Clear any forced GFX frequency settings."""
@@ -134,12 +134,12 @@ class Queue0Mixin:
     def _set_driver_table_vmid(self, value: int) -> None:
         self.send_message(0, 0x34, arg=value, pack=pack_u32)
 
-    def set_soft_min_cclk(self, core_id: int, freq_khz: int) -> int:
-        """Set soft min CCLK for a core; returns the clamped frequency in kHz."""
-        param = ((core_id & 0xFF) << 20) | (freq_khz & 0xFFFF)
+    def set_soft_min_cclk(self, core_id: int, freq_mhz: int) -> int:
+        """Set soft min CCLK for a core; returns the clamped frequency in MHz."""
+        param = ((core_id & 0xFF) << 20) | (freq_mhz & 0xFFFF)
         return self.send_message(0, 0x35, arg=param, pack=pack_u32, decode=decode_u32)
 
-    def set_soft_max_cclk(self, core_id: int, freq_khz: int) -> int:
-        """Set soft max CCLK for a core; returns the clamped frequency in kHz."""
-        param = ((core_id & 0xFF) << 20) | (freq_khz & 0xFFFF)
+    def set_soft_max_cclk(self, core_id: int, freq_mhz: int) -> int:
+        """Set soft max CCLK for a core; returns the clamped frequency in MHz."""
+        param = ((core_id & 0xFF) << 20) | (freq_mhz & 0xFFFF)
         return self.send_message(0, 0x36, arg=param, pack=pack_u32, decode=decode_u32)

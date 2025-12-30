@@ -66,9 +66,9 @@ class Queue3Mixin:
     def _q3_0x24(self) -> int | None:
         return self.send_message(3, 0x24)
 
-    def q3_0x25_set_oc_clk(self, core_id: int, freq_khz: int) -> None:
+    def q3_0x25_set_oc_clk(self, core_id: int, freq_mhz: int) -> None:
         """Set OC target clock for a core or all cores (core_id=0xFF)."""
-        param = ((core_id & 0xFF) << 16) | (freq_khz & 0xFFFF)
+        param = ((core_id & 0xFF) << 16) | (freq_mhz & 0xFFFF)
         self.send_message(3, 0x25, arg=param, pack=pack_u32)
 
     def q3_0x26_unset_oc_clk(self, core_id: int) -> None:
@@ -111,7 +111,7 @@ class Queue3Mixin:
         return self.send_message(3, 0x3A, arg=value, pack=pack_u32, decode=decode_u32)
 
     def q3_0x3b_get_clk_assigned_to_p_state(self, pstate: int) -> int:
-        """Return the P-state clock in kHz for pstate 0-7."""
+        """Return the P-state clock in MHz for pstate 0-7."""
         return self.send_message(3, 0x3B, arg=pstate, pack=pack_u32, decode=decode_u32)
 
     def _q2_0x05_enable_smu_features_3c(self, value: int = 0) -> int | None:
@@ -133,7 +133,7 @@ class Queue3Mixin:
         return self.send_message(3, 0x42, arg=param, pack=pack_u32, decode=decode_u32)
 
     def q3_0x43_get_core_freq(self, core_id: int) -> int:
-        """Return core frequency in kHz for core_id 0-7."""
+        """Return core frequency in MHz for core_id 0-7."""
         return self.send_message(3, 0x43, arg=core_id, pack=pack_u32, decode=decode_u32)
 
     def q3_0x47_return_status_0xfe(self) -> int:
@@ -150,7 +150,7 @@ class Queue3Mixin:
             raise ValueError("Offset can be in range of -5 to 5")
         self.send_message(3, 0x49, arg=offset, pack=pack_u32)
 
-    def q3_0x4a_get_gfx_vid_offset1(self, offset: int) -> None:
+    def q3_0x4a_set_gfx_vid_offset1(self, offset: int) -> None:
         """Set GFX VID offset 1 (valid range -5..5)."""
         if (offset > 5) or (offset < -5):
             raise ValueError("Offset can be in range of -5 to 5")
@@ -168,7 +168,7 @@ class Queue3Mixin:
         """Set CPU VID float offset (valid range about -0.2..0.2 V)."""
         self.send_message(3, 0x4D, arg=offset_v, pack=pack_vid_offset)
 
-    def q3_0x4e_set_gpu_vid_offset_largee(self, offset_v: float) -> None:
+    def q3_0x4e_set_gpu_vid_offset_large(self, offset_v: float) -> None:
         """Set GPU VID float offset (valid range about -0.2..0.2 V)."""
         self.send_message(3, 0x4E, arg=offset_v, pack=pack_vid_offset)
 
@@ -314,9 +314,9 @@ class Queue3Mixin:
         """Set VID main 2 limit (mV)."""
         self.send_message(3, 0x8E, arg=limit_mv, pack=pack_u32)
 
-    def q3_0x8f_set_max_cpu_boost_clk(self, freq_khz: int) -> None:
-        """Set max CPU boost clock (kHz)."""
-        self.send_message(3, 0x8F, arg=freq_khz, pack=pack_u32)
+    def q3_0x8f_set_max_cpu_boost_clk(self, freq_mhz: int) -> None:
+        """Set max CPU boost clock (MHz)."""
+        self.send_message(3, 0x8F, arg=freq_mhz, pack=pack_u32)
 
     def _q3_0x90(self) -> int | None:
         return self.send_message(3, 0x90)

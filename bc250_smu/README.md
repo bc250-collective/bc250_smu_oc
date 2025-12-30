@@ -18,7 +18,7 @@ only.
 
 ## Safety Notes
 
-- Accessing SMU mailboxes can conflict with the OS driver. Queue 1 is disabled
+- Accessing SMU mailboxes can conflict with the OS driver. Queue 0 is disabled
   by default and must be explicitly enabled.
 - This library reads/writes `/sys/bus/pci/devices/0000:00:00.0/config` and requires root privileges.
 - You should avoid concurrent access from multiple processes unless you enable
@@ -37,16 +37,16 @@ from bc250_smu import Bc250Smu
 ```python
 from bc250_smu import Bc250Smu
 
-smu = Bc250Smu(allow_queue1=False, use_flock=True)
+smu = Bc250Smu(allow_queue0=False, use_flock=True)
 
 # Basic health check
 smu.check_test_message()
 
-# Read SMU version and GFX clock (kHz)
+# Read SMU version and GFX clock (MHz)
 print(smu.get_smu_version())
 print(smu.query_gfxclk())
 
-# Force GFX frequency (argument is kHz)
+# Force GFX frequency (argument is MHz)
 smu.force_gfx_freq(1200)
 
 # Read current GFX VID in mV

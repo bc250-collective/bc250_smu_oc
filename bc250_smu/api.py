@@ -23,7 +23,7 @@ class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
     def __init__(
         self,
         bdf: str = "0000:00:00.0",
-        allow_queue1: bool = False,
+        allow_queue0: bool = False,
         use_flock: bool = False,
         queue_addrs: Optional[Dict[int, Tuple[int, int, int]]] = None,
         timeout: int = 100,
