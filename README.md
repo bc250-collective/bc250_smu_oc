@@ -8,6 +8,12 @@ Overclocking is done at your own risk! Failure to follow the full instructions p
 Increasing the CPU frequency without undervolting will result in uncapped Vid scaling & destroy your hardware! (I have managed to permanently brick one BC-250 in this way)   
 Always make sure that CPU core voltage ("Vid") does not exceed 1.325 V under any circumstances! Monitor your hardware & always do stress testing after changing parameters!   
 
+## Software Support
+
+OS: Tested on Ubuntu 25.10, Bazzite, Arch Linux
+Service Manager: systemd
+Firmware: Verified on BIOS V3 & V5
+
 ## Installation 
 
 1) Install `stress` CPU stress testing tool using you distributions package manager
