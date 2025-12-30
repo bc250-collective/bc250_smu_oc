@@ -13,4 +13,5 @@ bc250-detect = "bc250_detect:main"
 bc250-apply = "bc250_apply:main"
 
 [tool.setuptools]
-py-modules = ["bc250_detect", "bc250_apply", "bc250_smu", "bc250_limits", "stress_helper"]
+packages = ["bc250_smu"]
+py-modules = ["bc250_detect", "bc250_apply", "bc250_limits", "stress_helper"]

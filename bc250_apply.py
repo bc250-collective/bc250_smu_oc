@@ -7,7 +7,7 @@ import subprocess
 from pathlib import Path
 from textwrap import dedent
 
-from bc250_smu import bc250_rsmu
+from bc250_smu import Bc250Smu
 import bc250_limits as limits
 
 def get_config(path):
@@ -64,7 +64,7 @@ def apply_config(path):
         print("Elevating privileges to access PCI config space")
         os.execvp("sudo", ["sudo", sys.executable, __file__, *sys.argv[1:]])
 
-    smu = bc250_rsmu()
+    smu = Bc250Smu(use_flock=True)
 
     print("Probing SMU Communication...", end = '')
     smu.check_test_message()
@@ -72,13 +72,13 @@ def apply_config(path):
 
     print(f"Applying {frequency} MHz @ Scale {scale}, {max_temp}°C")
 
-    smu.set_cpu_max_temp(max_temp)
-    smu.set_gpu_max_temp(max_temp)
+    smu.q3_0x8b_set_cpu_max_temperature(max_temp)
+    smu.q3_0x8c_set_gpu_max_temperature(max_temp)
 
-    smu.disable_extra_voltage(True)
+    smu.disable_extra_cpu_gpu_voltage(True)
 
-    smu.set_vid_scaling(scale)
-    smu.set_boost_clock(frequency)
+    smu.q3_0x50_scale_f_vid_curve(scale)
+    smu.q3_0x8f_set_max_cpu_boost_clk(frequency)
 
 
 config_path = "/etc/bc250-smu-oc.conf"

@@ -8,7 +8,7 @@ import os
 import sys
 from pathlib import Path
 
-from bc250_smu import bc250_rsmu
+from bc250_smu import Bc250Smu
 from stress_helper import stress_start, stress_stop
 import bc250_limits as limits
 
@@ -32,8 +32,8 @@ def smu_apply(clock, scale):
     if clock > limits.freq_max or scale < limits.scale_min or scale > limits.scale_max:
         raise ValueError("Parameters out of bounds")
 
-    smu.set_vid_scaling(scale)
-    smu.set_boost_clock(clock)
+    smu.q3_0x50_scale_f_vid_curve(scale)
+    smu.q3_0x8f_set_max_cpu_boost_clk(clock)
 
 # Detect active cores by determining if their frequency is managed by the smu
 def detect_active_cores():
@@ -46,7 +46,7 @@ def detect_active_cores():
     print("Detected Active Cores: ", end='')
 
     for i in range(0, 8):
-        clk = smu.get_core_clock(i)
+        clk = smu.q3_0x43_get_core_freq(i)
         if clk > 3000:
             print(i, end='')
             cores.append(True)
@@ -61,7 +61,7 @@ def detect_active_cores():
 
 def check_throttling(threshold, cores):
     for i in range(0, 8):
-        clk = smu.get_core_clock(i)
+        clk = smu.q3_0x43_get_core_freq(i)
         if cores[i] == True and clk < threshold:
             return True
 
@@ -80,11 +80,11 @@ def write_config(f_safe, scale_safe, max_temperature):
         config.write(f)
 
 def revert_defaults():
-    smu.set_boost_clock(3500)
-    smu.set_vid_scaling(0)
-    smu.disable_extra_voltage(False)
-    smu.set_cpu_max_temp(100)
-    smu.set_gpu_max_temp(100)
+    smu.q3_0x8f_set_max_cpu_boost_clk(3500)
+    smu.q3_0x50_scale_f_vid_curve(0)
+    smu.disable_extra_cpu_gpu_voltage(False)
+    smu.q3_0x8b_set_cpu_max_temperature(100)
+    smu.q3_0x8c_set_gpu_max_temperature(100)
 
     print("Restored Default Parameters")
 
@@ -103,10 +103,10 @@ def detect(f_target, v_max, t_max):
     f_throttling_threshold = 50
 
     # set safe temperature limits
-    smu.set_cpu_max_temp(t_max)
-    smu.set_gpu_max_temp(t_max)
+    smu.q3_0x8b_set_cpu_max_temperature(t_max)
+    smu.q3_0x8c_set_gpu_max_temperature(t_max)
     # always disable extra voltage
-    smu.disable_extra_voltage(True)
+    smu.disable_extra_cpu_gpu_voltage(True)
 
     # Detect active cores for throttling detection
     cores = detect_active_cores()
@@ -119,7 +119,7 @@ def detect(f_target, v_max, t_max):
         stress_start()
         time.sleep(delay_short)
 
-        v_meas = smu.get_cpu_vid()
+        v_meas = smu.q3_0x36_get_current_cpu_voltage()
         if v_meas > v_max:
             stress_stop()
             v_scale_test -= max(int((v_meas - v_max) / 6.0), 1) # estimate the required undervolt
@@ -201,7 +201,7 @@ def main() -> None:
         print("Elevating privileges to access PCI config space")
         os.execvp("sudo", ["sudo", sys.executable, __file__, *sys.argv[1:]])
 
-    smu = bc250_rsmu()
+    smu = Bc250Smu(use_flock=True)
     atexit.register(revert_defaults)
 
     print("Probing SMU Communication...", end = '')
