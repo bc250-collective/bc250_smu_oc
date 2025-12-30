@@ -2,89 +2,89 @@ from .codec import decode_u32, pack_u32
 
 
 class Queue2Mixin:
-    def q2_0x04_get_device_name(self) -> int | None:
+    def _q2_0x04_get_device_name(self) -> int | None:
         return self.send_message(2, 0x04, decode=decode_u32)
 
-    def q2_0x05_enable_smu_features(self, value: int = 0) -> int | None:
+    def _q2_0x05_enable_smu_features(self, value: int = 0) -> int | None:
         return self.send_message(2, 0x05, arg=value, pack=pack_u32)
 
-    def q2_0x06_disable_smu_features(self, value: int = 0) -> int | None:
+    def _q2_0x06_disable_smu_features(self, value: int = 0) -> int | None:
         return self.send_message(2, 0x06, arg=value, pack=pack_u32)
 
-    def q2_0x07(self) -> int | None:
+    def _q2_0x07(self) -> int | None:
         return self.send_message(2, 0x07)
 
-    def q2_0x08(self) -> int | None:
+    def _q2_0x08(self) -> int | None:
         return self.send_message(2, 0x08)
 
-    def q2_0x09(self) -> int | None:
+    def _q2_0x09(self) -> int | None:
         return self.send_message(2, 0x09)
 
-    def q2_0x0a(self) -> int | None:
+    def _q2_0x0a(self) -> int | None:
         return self.send_message(2, 0x0A)
 
-    def q2_0x0b(self) -> int | None:
+    def _q2_0x0b(self) -> int | None:
         return self.send_message(2, 0x0B)
 
-    def q2_0x0c(self) -> int | None:
+    def _q2_0x0c(self) -> int | None:
         return self.send_message(2, 0x0C)
 
-    def q2_message_set_some_other_addr_high(self, value: int = 0) -> int | None:
+    def _q2_message_set_some_other_addr_high(self, value: int = 0) -> int | None:
         return self.send_message(2, 0x0D, arg=value, pack=pack_u32)
 
-    def q2_message_set_some_other_addr_low(self, value: int = 0) -> int | None:
+    def _q2_message_set_some_other_addr_low(self, value: int = 0) -> int | None:
         return self.send_message(2, 0x0E, arg=value, pack=pack_u32)
 
-    def q2_0x3e(self) -> int | None:
+    def _q2_0x3e(self) -> int | None:
         return self.send_message(2, 0x0F)
 
-    def q2_0x3f(self) -> int | None:
+    def _q2_0x3f(self) -> int | None:
         return self.send_message(2, 0x10)
 
-    def q2_0x13(self) -> int | None:
+    def _q2_0x13(self) -> int | None:
         return self.send_message(2, 0x13)
 
-    def q2_0x14(self) -> int | None:
+    def _q2_0x14(self) -> int | None:
         return self.send_message(2, 0x14)
 
-    def q2_0x15(self) -> int | None:
+    def _q2_0x15(self) -> int | None:
         return self.send_message(2, 0x15)
 
-    def q2_0x16(self) -> int | None:
+    def _q2_0x16(self) -> int | None:
         return self.send_message(2, 0x16)
 
-    def q2_0x17_cpu_droop_calibration(self, value: int = 0) -> int | None:
+    def _q2_0x17_cpu_droop_calibration(self, value: int = 0) -> int | None:
         return self.send_message(2, 0x17, arg=value, pack=pack_u32)
 
-    def q2_0x1a(self) -> int | None:
+    def _q2_0x1a(self) -> int | None:
         return self.send_message(2, 0x1A)
 
-    def q2_0x20(self) -> int | None:
+    def _q2_0x20(self) -> int | None:
         return self.send_message(2, 0x20)
 
-    def q2_0x21(self) -> int | None:
+    def _q2_0x21(self) -> int | None:
         return self.send_message(2, 0x21)
 
-    def q2_0x22(self) -> int | None:
+    def _q2_0x22(self) -> int | None:
         return self.send_message(2, 0x22)
 
-    def q2_0x23(self) -> int | None:
+    def _q2_0x23(self) -> int | None:
         return self.send_message(2, 0x23)
 
-    def q2_0x29(self) -> int | None:
+    def _q2_0x29(self) -> int | None:
         return self.send_message(2, 0x29)
 
-    def q2_0x2c_probably_power_limit_settings(self) -> int | None:
+    def _q2_0x2c_probably_power_limit_settings(self) -> int | None:
         return self.send_message(2, 0x2C)
 
-    def q2_0x2d_sibling_of_0x2c_but_returns_v(self) -> int | None:
+    def _q2_0x2d_sibling_of_0x2c_but_returns_v(self) -> int | None:
         return self.send_message(2, 0x2D)
 
-    def q2_0x2e(self) -> int | None:
+    def _q2_0x2e(self) -> int | None:
         return self.send_message(2, 0x2E)
 
-    def q2_0x2f(self) -> int | None:
+    def _q2_0x2f(self) -> int | None:
         return self.send_message(2, 0x2F)
 
-    def q2_0x30(self) -> int | None:
+    def _q2_0x30(self) -> int | None:
         return self.send_message(2, 0x30)
