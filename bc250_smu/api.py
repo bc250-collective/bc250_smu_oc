@@ -453,7 +453,7 @@ class Bc250Smu:
         return self.send_message(3, 0x48, decode=decode_u32)
 
     def q3_0x49_set_cpu_vid_offset(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x49, arg=value, pack=pack_vid_offset)
+        return self.send_message(3, 0x49, arg=value, pack=pack_u32)
 
     def q3_0x4a_getgfxvidoffset1(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x4A, arg=value, pack=pack_u32)
@@ -465,16 +465,16 @@ class Bc250Smu:
         return self.send_message(3, 0x4C)
 
     def q3_0x4d_set_cpu_vid_offset_large(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x4D, arg=value, pack=pack_u32)
+        return self.send_message(3, 0x4D, arg=value, pack=pack_vid_offset)
 
     def q3_0x4e_set_gpu_vid_offset_largee(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x4E, arg=value, pack=pack_u32)
+        return self.send_message(3, 0x4E, arg=value, pack=pack_vid_offset)
 
     def q3_0x4f(self) -> int | None:
         return self.send_message(3, 0x4F)
 
     def q3_0x50_scale_f_vid_curve(self, value: int = 0) -> int | None:
-        return self.send_message(3, 0x50, arg=value, pack=pack_u32)
+        return self.send_message(3, 0x50, arg=value, pack=pack_s16)
 
     def q3_0x51_set_cpu_coeff(self, value: int = 0) -> int | None:
         return self.send_message(3, 0x51, arg=value, pack=pack_u32)
