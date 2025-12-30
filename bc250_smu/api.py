@@ -1,6 +1,11 @@
-import struct
 from typing import Callable, Dict, Optional, Tuple
 
+from .api_q0 import Queue0Mixin
+from .api_q1 import Queue1Mixin
+from .api_q2 import Queue2Mixin
+from .api_q3 import Queue3Mixin
+from .api_q4 import Queue4Mixin
+from .codec import decode_u32, pack_u32
 from .mailbox import Bc250Mailbox
 from .transport import Bc250PciTransport
 
@@ -11,27 +16,7 @@ DEFAULT_QUEUE_ADDRS: Dict[int, Tuple[int, int, int]] = {
 }
 
 
-def pack_u32(value: int) -> int:
-    return int(value) & 0xFFFFFFFF
-
-
-def pack_s16(value: int) -> int:
-    return struct.unpack("<I", struct.pack("<h", int(value)) + b"\x00\x00")[0]
-
-
-def pack_f32(value: float) -> int:
-    return struct.unpack("<I", struct.pack("<f", float(value)))[0]
-
-
-def pack_vid_offset(volts: float) -> int:
-    return pack_f32(volts)
-
-
-def decode_u32(value: int) -> int:
-    return int(value) & 0xFFFFFFFF
-
-
-class Bc250Smu:
+class Bc250Smu(Queue0Mixin, Queue1Mixin, Queue2Mixin, Queue3Mixin, Queue4Mixin):
     def __init__(
         self,
         bdf: str = "0000:00:00.0",
@@ -96,6 +81,7 @@ class Bc250Smu:
             raise RuntimeError(f"unexpected test response {response}, expected {value + 1}")
         return True
 
+<<<<<<< HEAD
 
     # TESTED MESSAGES:
 
@@ -664,6 +650,10 @@ class Bc250Smu:
 
     def q5_0x11(self) -> int | None:
         return self.send_message(4, 0x11)
+=======
+    def check_test_message(self) -> bool:
+        return self.test_message(123)
+>>>>>>> 351873b (Separated queue APIs into different files for easier readability)
 
     def _get_queue(self, queue: int) -> Bc250Mailbox:
         if queue not in self._queues:
