@@ -16,7 +16,7 @@ Firmware: Verified on BIOS V3 & V5
 
 ## Installation 
 
-1) Install `stress` CPU stress testing tool using you distributions package manager
+1) Install `stress-ng` CPU stress testing tool using you distributions package manager
 
 2) Use `pip` or `pipx` depending on how your OS manages python packages to install the cli
 

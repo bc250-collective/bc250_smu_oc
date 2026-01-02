@@ -6,7 +6,7 @@ _process = None
 def stress_start():
     global _process
     if _process is None:
-        _process = subprocess.Popen(["stress", "--cpu", "12"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        _process = subprocess.Popen(["stress-ng", "--cpu", "12"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def stress_stop():
     global _process
