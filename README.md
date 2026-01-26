@@ -67,7 +67,7 @@ You can try these settings to reach 4 GHz @ 1275 mV on your system. Use the --ke
 
 If your system crashes during the detection, try rerunning the command with `--vid 1300`. If it still is not stable, reduce the target frequency. To be easy on your system, you should stay below 1300 mV Vid.
 
-Once you are happy with your settings & have done more thorough stability testing, you can apply the settings on startup:
+Once you are happy with your settings & have done more thorough stability testing (read [Stability testing](#stability-testing) if you want to learn more), you can apply the settings on startup:
 
 <pre>bc250-apply --install overclock.conf
 systemctl enable bc250-smu-oc</pre> 
@@ -89,6 +89,7 @@ I recommend `amdgpu_top` because it does not require recompilation of the kernel
 To monitor effective CPU clocks (useful for detecting clock stretching):   
 `watch -n 1 "cat /proc/cpuinfo | grep MHz"`
 
+
 ## Why is my CPU throttling (when I load the GPU)?
 
 Do not increase the temperature limit in response to this issue. If your thermal solution is inadequate to cool the CPU, improve it.   
@@ -98,7 +99,22 @@ So it is a good idea to overclock, set a sensible temperature limit & let the SM
 
 If you want to target high clocks even when the GPU is loaded, watercooling might be necessary.   
 
-## Advanced Overclocking 
+## Stability testing
+
+There is a lot of way to stress your system, but in the end, it's a mix of synthetic and real-world usage.
+
+For synthetic testing, there is a lot of different tools, but popular ones (that run on linux and in use by bc250 community):
+- OCCT (Good tests are 3D adaptive test and CPU+RAM. Always choose variable load, because it's closer resemble real world usage)
+- Prime95 (Thanks @Panasonic2288 for remiding me about it)
+
+Separate note about Furmark, it's good GPU stress test. But it doesn't check stability per se. Use it for testing your power delivery and cooling.  
+
+As for real-world usage, it's harder to tell, but just go, and do the stuff that you do or plan to do regularly on your bc250.  
+E.g. if you game: just try playing them, and check if there is any artifacts/bugs/crashes.
+if you watch videos - do it, etc.  
+
+
+## Advanced Overclocking and system control 
 
 The `bc250_smu` libary defines more SMU messages for overclocking. Be aware that the SMU does minimal validity checking & you have full control over the system!
 
